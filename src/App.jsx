@@ -1,123 +1,81 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import "./App.css";
+import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import DashboardPage from './pages/DashboardPage';
+import LoginPage from './pages/LoginPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
+function AppRoutes({ isDarkMode, onToggleTheme }) {
+  const location = useLocation();
+  const { user, logout } = useAuth();
 
-  const navigate = useNavigate();
-
-  const register = async () => {
-    const response = await fetch("http://localhost:8080/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const text = await response.text();
-    setMessage(text);
-    setIsError(!text.includes("succès"));
-  };
-
-  const login = async () => {
-    const response = await fetch("http://localhost:8080/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const text = await response.text();
-
-    if (text.includes("Connexion réussie")) {
-      localStorage.setItem("username", username);
-      navigate("/dashboard");
-    } else {
-      setMessage(text);
-      setIsError(true);
-    }
+  const handleLogout = () => {
+    logout();
+    toast.success('Déconnexion réussie.');
   };
 
   return (
-    <div className="page">
-      <div className="card">
-        <h1>SafeLogin</h1>
-        <p>Connexion sécurisée avec React + Java</p>
+    <div className="min-h-screen">
+      <Navbar user={user} onLogout={handleLogout} isDarkMode={isDarkMode} onToggleTheme={onToggleTheme} />
 
-        <input
-          type="text"
-          placeholder="Nom d'utilisateur"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+      <main className="mx-auto w-full max-w-7xl px-4 pb-10 pt-6 sm:px-6 lg:px-8">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<LoginPage />} />
+            <Route
+              path="/dashboard"
+              element={(
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              )}
+            />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AnimatePresence>
+      </main>
 
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <div className="buttons">
-          <button onClick={login}>Se connecter</button>
-          <button onClick={register}>S’inscrire</button>
-        </div>
-
-        {message && (
-          <div className={isError ? "message error" : "message success"}>
-            {message}
-          </div>
-        )}
-      </div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3200,
+          style: {
+            borderRadius: '12px',
+            background: '#0f172a',
+            color: '#f8fafc',
+            fontWeight: 600,
+          },
+        }}
+      />
     </div>
   );
 }
 
-function DashboardPage() {
-  const username = localStorage.getItem("username");
-  const navigate = useNavigate();
+export default function App() {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('safelogin_theme');
+    return savedMode === 'dark';
+  });
 
- if (!username) {
-  return <Navigate to="/" replace />;
-}
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle('dark', isDarkMode);
+    localStorage.setItem('safelogin_theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
-  const logout = () => {
-    localStorage.removeItem("username");
-    navigate("/");
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
   };
 
   return (
-    <div className="page">
-      <div className="card dashboard">
-        <h1>Bienvenue, {username} 👋</h1>
-        <p>Vous êtes connecté à votre espace sécurisé.</p>
-
-        <div className="dashboard-box">
-          <h2>Tableau de bord</h2>
-          <p>Votre authentification React + Java fonctionne correctement.</p>
-        </div>
-
-        <button onClick={logout}>Se déconnecter</button>
-      </div>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes isDarkMode={isDarkMode} onToggleTheme={toggleTheme} />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
