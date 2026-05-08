@@ -38,11 +38,7 @@ export default function Navbar({ user, onLogout, isDarkMode, onToggleTheme }) {
                 Logout
               </button>
             </div>
-          ) : (
-            <span className="hidden rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 sm:inline-block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
-              Invité
-            </span>
-          )}
+          ) : null}
         </div>
       </div>
     </header>

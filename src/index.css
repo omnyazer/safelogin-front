@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 @import "tailwindcss" source("../src");
 @source "../index.html";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   color-scheme: light;
@@ -14,23 +15,53 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: 'Manrope', system-ui, sans-serif;
+  background: #eef2ff;
+  color: #0f172a;
+  transition: color 0.45s ease;
+}
+
+.dark body {
+  color: #e2e8f0;
+}
+
+#root {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+#root::before,
+#root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+}
+
+#root::before {
+  opacity: 1;
   background:
     radial-gradient(circle at 5% 15%, rgba(56, 189, 248, 0.16), transparent 45%),
     radial-gradient(circle at 85% 0%, rgba(99, 102, 241, 0.16), transparent 40%),
     linear-gradient(120deg, #f8fbff 0%, #eef2ff 48%, #f5f3ff 100%);
-  color: #0f172a;
-  transition:
-    background-color 0.45s ease,
-    background-image 0.45s ease,
-    color 0.45s ease;
 }
 
-.dark body {
+#root::after {
+  opacity: 0;
   background:
     radial-gradient(circle at 5% 15%, rgba(56, 189, 248, 0.2), transparent 45%),
     radial-gradient(circle at 85% 0%, rgba(129, 140, 248, 0.2), transparent 35%),
     linear-gradient(130deg, #020617 0%, #0b1220 45%, #1e1b4b 100%);
-  color: #e2e8f0;
+}
+
+.dark #root::before {
+  opacity: 0;
+}
+
+.dark #root::after {
+  opacity: 1;
 }
 
 header,

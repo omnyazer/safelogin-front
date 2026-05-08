@@ -42,10 +42,16 @@ export default function LoginPage() {
     }
   }, [user, navigate]);
 
-  const onChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  const onUsernameChange = (event) => {
+    const { value } = event.target;
+    setFormData((prev) => ({ ...prev, username: value }));
+    setErrors((prev) => ({ ...prev, username: undefined }));
+  };
+
+  const onPasswordChange = (event) => {
+    const { value } = event.target;
+    setFormData((prev) => ({ ...prev, password: value }));
+    setErrors((prev) => ({ ...prev, password: undefined }));
   };
 
   const handleSubmit = async (mode) => {
@@ -86,33 +92,61 @@ export default function LoginPage() {
         subtitle="Accède à ton espace SafeLogin avec validation côté client, dark mode et animations."
         className="self-center"
       >
+        <input
+          type="text"
+          name="fake-username"
+          autoComplete="username"
+          tabIndex={-1}
+          className="sr-only"
+          aria-hidden="true"
+        />
+        <input
+          type="password"
+          name="fake-password"
+          autoComplete="current-password"
+          tabIndex={-1}
+          className="sr-only"
+          aria-hidden="true"
+        />
+
         <div className="space-y-4 text-left">
           <div>
-            <label className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-200" htmlFor="username">
+            <label
+              className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-200"
+              htmlFor="login-username"
+            >
               Nom d'utilisateur
             </label>
             <input
-              id="username"
-              name="username"
+              id="login-username"
+              name="login-username"
               value={formData.username}
-              onChange={onChange}
+              onChange={onUsernameChange}
               placeholder="ex: lisa.dev"
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-cyan-700/30"
             />
             {errors.username && <p className="mt-1 text-xs font-medium text-rose-600">{errors.username}</p>}
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-200" htmlFor="password">
+            <label
+              className="mb-1 block text-sm font-semibold text-slate-700 dark:text-slate-200"
+              htmlFor="login-password"
+            >
               Mot de passe
             </label>
             <input
-              id="password"
-              name="password"
+              id="login-password"
+              name="login-password"
               type="password"
               value={formData.password}
-              onChange={onChange}
+              onChange={onPasswordChange}
               placeholder="Minimum 6 caractères"
+              autoComplete="new-password"
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-cyan-700/30"
             />
             {errors.password && <p className="mt-1 text-xs font-medium text-rose-600">{errors.password}</p>}

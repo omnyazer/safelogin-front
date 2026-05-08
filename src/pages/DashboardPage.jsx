@@ -3,24 +3,6 @@ import Card from '../components/Card';
 import AvatarBadge from '../components/AvatarBadge';
 import { useAuth } from '../context/AuthContext';
 
-const dashboardCards = [
-  {
-    title: 'Score sécurité',
-    value: '98%',
-    description: 'Excellent niveau de sécurité détecté sur votre session.',
-  },
-  {
-    title: 'Sessions actives',
-    value: '01',
-    description: 'Aucune connexion suspecte sur les dernières 24h.',
-  },
-  {
-    title: 'Statut API',
-    value: 'UP',
-    description: 'Le backend Spring Boot répond correctement.',
-  },
-];
-
 export default function DashboardPage() {
   const { user } = useAuth();
 
@@ -55,22 +37,6 @@ export default function DashboardPage() {
         </div>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {dashboardCards.map((card, index) => (
-          <motion.div
-            key={card.title}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08 * index, duration: 0.3 }}
-          >
-            <Card>
-              <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{card.title}</p>
-              <p className="mt-2 font-display text-4xl font-bold text-slate-900 dark:text-slate-50">{card.value}</p>
-              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{card.description}</p>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
     </motion.div>
   );
 }
