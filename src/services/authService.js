@@ -51,12 +51,24 @@ async function postAuth(endpoint, payload) {
     body: JSON.stringify(payload),
   });
 
-  const message = await response.text();
+  const contentType = response.headers.get('content-type') || '';
+  let parsedMessage;
+  let success = response.ok;
+
+  if (contentType.includes('application/json')) {
+    const body = await response.json();
+    parsedMessage = body?.message || '';
+    success = typeof body?.success === 'boolean' ? body.success : response.ok;
+  } else {
+    parsedMessage = await response.text();
+  }
+  const message = parsedMessage || '';
+
   if (!response.ok) {
     throw new Error(message || 'Une erreur serveur est survenue.');
   }
 
-  return message;
+  return { success, message };
 }
 
 export async function loginRequest(credentials) {

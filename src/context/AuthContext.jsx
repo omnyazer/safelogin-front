@@ -37,15 +37,14 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (username, password) => {
     setAuthLoading(true);
     try {
-      const message = await loginRequest({ username, password });
-      const isSuccess = /connexion\s+r[eé]ussie/i.test(message);
+      const result = await loginRequest({ username, password });
 
-      if (isSuccess) {
+      if (result.success) {
         persistUser(username);
         setUser({ username });
       }
 
-      return { ok: isSuccess, message };
+      return { ok: result.success, message: result.message };
     } catch (error) {
       return {
         ok: false,
@@ -59,14 +58,13 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (username, password) => {
     setAuthLoading(true);
     try {
-      const message = await registerRequest({ username, password });
-      const isSuccess = /(inscription|enregistr|cr[eé][eé])/i.test(message);
+      const result = await registerRequest({ username, password });
 
-      if (isSuccess) {
+      if (result.success) {
         rememberRegisteredUser(username);
       }
 
-      return { ok: isSuccess, message };
+      return { ok: result.success, message: result.message };
     } catch (error) {
       return {
         ok: false,
