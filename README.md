@@ -1,5 +1,10 @@
 # SafeLogin - Fullstack Auth App
 
+Ce repository contient le frontend de l’application SafeLogin.
+
+➡️ Repository du backend :
+https://github.com/omnyazer/safelogin-back.git
+
 SafeLogin est une application d'authentification fullstack (frontend + backend) construite pour démontrer une architecture propre, la sécurité des mots de passe et la protection des routes avec JWT.
 
 ## Stack technique
